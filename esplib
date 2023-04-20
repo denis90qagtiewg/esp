@@ -7,6 +7,9 @@ local ESP = {
 	Color = Color3.fromRGB(255, 255, 255),
 	FaceCamera = false,
 	Names = true,
+	Distance = true,
+	Health = true,
+	LookAngle = true,
 	TeamColor = true,
 	Thickness = 2,
 	AttachShift = 1,
@@ -22,6 +25,7 @@ local cam = workspace.CurrentCamera
 local plrs = game:GetService("Players")
 local plr = plrs.LocalPlayer
 local mouse = plr:GetMouse()
+
 
 local V3new = Vector3.new
 local WorldToViewportPoint = cam.WorldToViewportPoint
@@ -183,6 +187,11 @@ function boxBase:Update()
 	end
 
 	--calculations--
+	local char = self.PrimaryPart.Parent
+	local hum = char.Humanoid
+	
+	local eplr = plrs:GetPlayerFromCharacter(char)
+	
 	local cf = self.PrimaryPart.CFrame
 	if ESP.FaceCamera then
 		cf = CFrame.new(cf.p, cam.CFrame.p)
@@ -221,24 +230,49 @@ function boxBase:Update()
 
 	if ESP.Names then
 		local TagPos, Vis5 = WorldToViewportPoint(cam, locs.TagPos.p)
-
+		
 		if Vis5 then
 			self.Components.Name.Visible = true
-			self.Components.Name.Position = Vector2.new(TagPos.X, TagPos.Y)
+			self.Components.Name.Position = Vector2.new(TagPos.X, TagPos.Y + -14)
 			self.Components.Name.Text = self.Name
 			self.Components.Name.Color = color
-
-			self.Components.Distance.Visible = true
-			self.Components.Distance.Position = Vector2.new(TagPos.X, TagPos.Y + 14)
-			self.Components.Distance.Text = math.floor((cam.CFrame.p - cf.p).magnitude) .."m away"
-			self.Components.Distance.Color = color
 		else
 			self.Components.Name.Visible = false
-			self.Components.Distance.Visible = false
 		end
 	else
 		self.Components.Name.Visible = false
+	end
+	
+	if ESP.Distance then
+		local TagPos, VisA = WorldToViewportPoint(cam, locs.TagPos.p)
+		
+		local actualDistance = ((cam.CFrame.p - cf.p).Magnitude) / 3
+		
+		if VisA then
+			self.Components.Distance.Visible = true
+			self.Components.Distance.Position = Vector2.new(TagPos.X, TagPos.Y + -28)
+			self.Components.Distance.Text = actualDistance.."m away."
+			self.Components.Distance.Color = color
+		else
+			self.Components.Distance.Visible = false
+		end
+	else
 		self.Components.Distance.Visible = false
+	end
+	
+	if ESP.Health then
+		local TagPos, VisB = WorldToViewportPoint(cam, locs.TagPos.p)
+
+		if VisB then
+			self.Components.Health.Visible = true
+			self.Components.Health.Position = Vector2.new(TagPos.X, TagPos.Y + -42)
+			self.Components.Health.Text = hum.Health.."/"..hum.MaxHealth
+			self.Components.Health.Color = color
+		else
+			self.Components.Health.Visible = false
+		end
+	else
+		self.Components.Health.Visible = false
 	end
 
 	if ESP.Tracers then
@@ -301,9 +335,17 @@ function ESP:Add(obj, options)
 		Center = true,
 		Outline = true,
 		Size = 19,
-		Visible = self.Enabled and self.Names
+		Visible = self.Enabled and self.Distance
 	})
-
+	
+	box.Components["Health"] = Draw("Text", {
+		Color = box.Color,
+		Center = true,
+		Outline = true,
+		Size = 19,
+		Visible = self.Enabled and self.Health
+	})
+	
 	box.Components["Tracer"] = Draw("Line", {
 		Thickness = ESP.Thickness,
 		Color = box.Color,
@@ -311,6 +353,28 @@ function ESP:Add(obj, options)
 		Visible = self.Enabled and self.Tracers
 	})
 	
+	self.Objects[obj] = box
+
+	obj.AncestryChanged:Connect(function(_, parent)
+		if parent == nil and ESP.AutoRemove ~= false then
+			box:Remove()
+		end
+	end)
+	obj:GetPropertyChangedSignal("Parent"):Connect(function()
+		if obj.Parent == nil and ESP.AutoRemove ~= false then
+			box:Remove()
+		end
+	end)
+
+	local hum = obj:FindFirstChildOfClass("Humanoid")
+	if hum then
+		hum.Died:Connect(function()
+			if ESP.AutoRemove ~= false then
+				box:Remove()
+			end
+		end)
+	end
+
 	return box
 end
 
