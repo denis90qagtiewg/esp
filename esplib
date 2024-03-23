@@ -4,7 +4,7 @@ local ESP = {
 	Boxes = true,
 	BoxShift = CFrame.new(0,-1.5,0),
 	BoxSize = Vector3.new(4,6,0),
-	Color = Color3.fromRGB(255, 255, 255),
+	Color = Color3.new(1, 1, 1),
 	FaceCamera = false,
 	Names = true,
 	Distance = true,
@@ -231,6 +231,9 @@ function boxBase:Update()
 	local RootPosition = WorldToViewportPoint(cam, humRp.Position)
 	local HeadPosition = WorldToViewportPoint(cam, head.Position + headOff)
 	local LegPosition = WorldToViewportPoint(cam, humRp.Position - legOff)
+	
+	local size1 = Vector2.new(1000 / RootPosition.Z, HeadPosition.Y - LegPosition.Y)
+	local position1 = Vector2.new(RootPosition.X - size1.X / 2, RootPosition.Y - size1.Y / 2)
 
 	local eplr = plrs:GetPlayerFromCharacter(char)
 
@@ -247,27 +250,30 @@ function boxBase:Update()
 		TagPos = cf * ESP.BoxShift * CFrame.new(0,size.Y/2,0),
 		Torso = cf
 	}
+	
+	local boxesOutline = self.Components.BoxesOutline
+	local boxes = self.Components.Box
 
 	if ESP.Boxes then
-		local TopLeft, Vis1 = WorldToViewportPoint(cam, locs.TopLeft.p)
-		local TopRight, Vis2 = WorldToViewportPoint(cam, locs.TopRight.p)
-		local BottomLeft, Vis3 = WorldToViewportPoint(cam, locs.BottomLeft.p)
-		local BottomRight, Vis4 = WorldToViewportPoint(cam, locs.BottomRight.p)
+		local a, OnScreen = WorldToViewportPoint(cam, humRp.Position)
 
-		if self.Components.Quad then
-			if Vis1 or Vis2 or Vis3 or Vis4 then
-				self.Components.Quad.Visible = true
-				self.Components.Quad.PointA = Vector2.new(TopRight.X, TopRight.Y)
-				self.Components.Quad.PointB = Vector2.new(TopLeft.X, TopLeft.Y)
-				self.Components.Quad.PointC = Vector2.new(BottomLeft.X, BottomLeft.Y)
-				self.Components.Quad.PointD = Vector2.new(BottomRight.X, BottomRight.Y)
-				self.Components.Quad.Color = color
+		if boxes then
+			if OnScreen then
+				boxesOutline.Size = size1
+				boxesOutline.Position = position1
+				boxesOutline.Visible = true
+				
+				boxes.Size = size1
+				boxes.Position = position1
+				boxes.Visible = true
 			else
-				self.Components.Quad.Visible = false
+				boxesOutline.Visible = false
+				boxes.Visible = false
 			end
 		end
 	else
-		self.Components.Quad.Visible = false
+		boxesOutline.Visible = false
+		boxes.Visible = false
 	end
 
 	if ESP.Names then
@@ -342,11 +348,6 @@ function boxBase:Update()
 		local TorsoPos, OnScreen = WorldToViewportPoint(cam, humRp.Position)
 
 		if OnScreen then
-			local quad = self.Components.Quad
-			print(quad.Position)
-			local size1 = Vector2.new(1000 / RootPosition.Z, HeadPosition.Y - LegPosition.Y)
-			local position1 = Vector2.new(RootPosition.X - size1.X / 2, RootPosition.Y - size1.Y / 2)
-			
 			HealthBarOutline.Size = Vector2.new(2, (HeadPosition.Y - LegPosition.Y))
 			HealthBarOutline.Position = position1 - Vector2.new(6, 0)
 			HealthBarOutline.Visible = true
@@ -440,8 +441,15 @@ function ESP:Add(obj, options)
 		self:GetBox(obj):Remove()
 	end
 
-	box.Components["Quad"] = Draw("Quad", {
-		Thickness = self.Thickness,
+	box.Components["BoxesOutline"] = Draw("Square", {
+		Thickness = 3,
+		Color = box.Color,
+		Transparency = 1,
+		Filled = false,
+		Visible = self.Enabled and self.Boxes
+	})
+	box.Components["Box"] = Draw("Square", {
+		Thickness = 1,
 		Color = box.Color,
 		Transparency = 1,
 		Filled = false,
@@ -470,35 +478,30 @@ function ESP:Add(obj, options)
 		Size = 19,
 		Visible = self.Enabled and self.Health
 	})
-	
 	box.Components["Tracer"] = Draw("Line", {
 		Thickness = ESP.Thickness,
 		Color = box.Color,
 		Transparency = 1,
 		Visible = self.Enabled and self.Tracers
 	})
-	
 	box.Components["LookAngle"] = Draw("Line", {
 		Thickness = ESP.Thickness,
 		Color = box.Color,
 		Transparency = 1,
 		Visible = self.Enabled and self.LookAngle
 	})
-	
 	box.Components["HealthBarOutline"] = Draw("Square", {
 		Thickness = 3,
 		Color = Color3.new(0,0,0),
 		Filled = false,
 		Visible = self.Enabled and self.HealthBar
 	})
-	
 	box.Components["HealthBar"] = Draw("Square", {
 		Thickness = 1,
 		Color = Color3.new(0, 1, 0),
 		Filled = false,
 		Visible = self.Enabled and self.HealthBar
 	})
-	
 	box.Components["ProximityArrow"] = Draw("Triangle", {
 		Thickness = 0,
 		Color = box.Color,
