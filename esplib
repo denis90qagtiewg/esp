@@ -305,7 +305,7 @@ function boxBase:Update()
 		local TagPos, VisB = WorldToViewportPoint(cam, locs.TagPos.p)
 
 		if VisB then
-			local health = math.floor(hum.Health)
+			local health = math.modf(hum.Health)
 			
 			self.Components.Health.Visible = true
 			self.Components.Health.Position = Vector2.new(TagPos.X, TagPos.Y + -42)
@@ -386,9 +386,9 @@ function boxBase:Update()
 			local vectorUnit
 
 			if (labelPos.Z < 0) then
-				vectorUnit = -(Vector2.new(labelPos.X, labelPos.Y) - self._viewportSizeCenter).Unit
+				vectorUnit = -(Vector2.new(labelPos.X, labelPos.Y) - viewportSizeCenter).Unit
 			else
-				vectorUnit = (Vector2.new(labelPos.X, labelPos.Y) - self._viewportSizeCenter).Unit
+				vectorUnit = (Vector2.new(labelPos.X, labelPos.Y) - viewportSizeCenter).Unit
 			end
 			
 			local degreeOfCorner = -math.atan2(vectorUnit.X, vectorUnit.Y) - math.rad(45)
