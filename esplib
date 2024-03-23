@@ -156,27 +156,11 @@ local scalarPointBX, scalarPointBY
 scalarPointAX, scalarPointAY = 20, 20
 scalarPointBX, scalarPointBY = -20, -20
 
-function boxBase:GetOffsetTrianglePosition(closestPoint, radiusOfDegree)
-	local cosOfRadius, sinOfRadius = math.cos(radiusOfDegree), math.sin(radiusOfDegree);
-	local closestPointX, closestPointY = closestPoint.X, closestPoint.Y;
-
-	local sameBCCos = (closestPointX + scalarPointBX * cosOfRadius);
-	local sameBCSin = (closestPointY + scalarPointBX * sinOfRadius);
-
-	local sameACSin = (scalarPointAY * sinOfRadius);
-	local sameACCos = (scalarPointAY * cosOfRadius)
-
-	local pointX1 = (closestPointX + scalarPointAX * cosOfRadius) - sameACSin;
-	local pointY1 = closestPointY + (scalarPointAX * sinOfRadius) + sameACCos;
-
-	local pointX2 = sameBCCos - (scalarPointBY * sinOfRadius);
-	local pointY2 = sameBCSin + (scalarPointBY * cosOfRadius);
-
-	local pointX3 = sameBCCos - sameACSin;
-	local pointY3 = sameBCSin + sameACCos;
-
-	return Vector2.new(math.floor(pointX1), math.floor(pointY1)), Vector2.new(math.floor(pointX2), math.floor(pointY2)), Vector2.new(math.floor(pointX3), math.floor(pointY3));
-end;
+local function rotateVector(vector, radians)
+	local x, y = vector.X, vector.Y
+	local c, s = math.cos(radians), math.sin(radians)
+	return Vector2.new(x*c - y*s, x*s + y*c)
+end
 
 function boxBase:Update()
 	if not self.PrimaryPart then
@@ -280,6 +264,7 @@ function boxBase:Update()
 
 	if ESP.Names then
 		local TagPos, Vis5 = WorldToViewportPoint(cam, locs.TagPos.p)
+		self.Components.Name.Color = ESP.Color
 
 		if Vis5 then
 			self.Components.Name.Visible = true
@@ -298,6 +283,7 @@ function boxBase:Update()
 		
 		local actualDis = math.floor((cam.CFrame.Position - cf.Position).Magnitude) / 3
 		local actualdis2 = math.modf(actualDis)
+		self.Components.Distance.Color = ESP.Color
 		
 		if VisA then
 			self.Components.Distance.Visible = true
@@ -313,6 +299,7 @@ function boxBase:Update()
 
 	if ESP.Health then
 		local TagPos, VisB = WorldToViewportPoint(cam, locs.TagPos.p)
+		self.Components.Health.Color = ESP.Color
 
 		if VisB then
 			local health = math.ceil(hum.Health)
@@ -392,26 +379,19 @@ function boxBase:Update()
 		local distance = (humRp.Position - cam.CFrame.Position).Magnitude
 		Arrow.Color = ESP.Color
 		
-		if not OnScreen and distance < ESP.ProximityMaxDistance then
-			local viewportSize = Vector2.new(cam.ViewportSize.X / 2, cam.ViewportSize.Y - 10)
-			local viewportSizeCenter = viewportSize / 2
+		local cframe = cam.CFrame
+		local flat = CFrame.fromMatrix(cframe.Position, cframe.RightVector, Vector3.yAxis)
+		local objectSpace = CFrame.identity.PointToObjectSpace(flat, head.Position)
+		local direction = Vector2.new(objectSpace.X, objectSpace.Z).Unit
+		
+		if not OnScreen and distance < ESP.ProximityMaxDistance then	
+			local min2 = Vector2.zero.Min
+			local max2 = Vector2.zero.Max
 			
-			local vectorUnit
-
-			if (labelPos.Z < 0) then
-				vectorUnit = -(Vector2.new(labelPos.X, labelPos.Y) - viewportSize).Unit
-			else
-				vectorUnit = (Vector2.new(labelPos.X, labelPos.Y) - viewportSize).Unit
-			end
-			
-			local degreeOfCorner = -math.atan2(vectorUnit.X, vectorUnit.Y) - math.rad(45)
-			local closestPointToPlayer = viewportSize + vectorUnit * 20
-			
-			local pointA, pointB, pointC = boxBase:GetOffsetTrianglePosition(closestPointToPlayer, degreeOfCorner)
-			
-			Arrow.PointA = pointA
-			Arrow.PointB = pointB
-			Arrow.PointC = pointC
+			Arrow.PointA = min2(max2(cam.ViewportSize * 0.5 + direction * 150, Vector2.one * 25), cam.ViewportSize - Vector2.one * 25)
+			Arrow.PointB = Arrow.PointA - rotateVector(direction, 0.45) * 15
+			Arrow.PointC = Arrow.PointA - rotateVector(direction, -0.45) * 15
+			Arrow.Color = ESP.Color
 			
 			Arrow.Visible = true
 		else
