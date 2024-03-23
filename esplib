@@ -23,6 +23,9 @@ local ESP = {
 	NameOffset = -14,
 	HealthOffset = -42,
 	DistanceOffset = -28,
+	NameNegative = false,
+	DistanceNegative = false,
+	HealthNegative = false,
 
 	Objects = setmetatable({}, {__mode="kv"}),
 	Overrides = {}
@@ -268,9 +271,16 @@ function boxBase:Update()
 	if ESP.Names then
 		local TagPos, Vis5 = WorldToViewportPoint(cam, locs.TagPos.p)
 
+		local offset = ESP.NameOffset
+		if ESP.NameNegative then
+			offset = -ESP.NameOffset
+		else
+			offset = ESP.NameOffset
+		end
+		
 		if Vis5 then
 			self.Components.Name.Visible = true
-			self.Components.Name.Position = Vector2.new(TagPos.X, TagPos.Y + ESP.NameOffset)
+			self.Components.Name.Position = Vector2.new(TagPos.X, TagPos.Y + offset)
 			self.Components.Name.Text = self.Name
 			self.Components.Name.Color = ESP.Color
 		else
@@ -286,9 +296,16 @@ function boxBase:Update()
 		local actualDis = math.floor((cam.CFrame.Position - cf.Position).Magnitude) / 3
 		local actualdis2 = math.modf(actualDis)
 		
+		local offset = ESP.DistanceOffset
+		if ESP.DistanceNegative then
+			offset = -ESP.DistanceOffset
+		else
+			offset = ESP.DistanceOffset
+		end
+		
 		if VisA then
 			self.Components.Distance.Visible = true
-			self.Components.Distance.Position = Vector2.new(TagPos.X, TagPos.Y + ESP.DistanceOffset)
+			self.Components.Distance.Position = Vector2.new(TagPos.X, TagPos.Y + offset)
 			self.Components.Distance.Text = actualdis2.."m away"
 			self.Components.Distance.Color = ESP.Color
 		else
@@ -300,12 +317,19 @@ function boxBase:Update()
 
 	if ESP.Health then
 		local TagPos, VisB = WorldToViewportPoint(cam, locs.TagPos.p)
+		
+		local offset = ESP.HealthOffset
+		if ESP.HealthNegative then
+			offset = -ESP.HealthOffset
+		else
+			offset = ESP.HealthOffset
+		end
 
 		if VisB then
 			local health = math.ceil(hum.Health)
 			
 			self.Components.Health.Visible = true
-			self.Components.Health.Position = Vector2.new(TagPos.X, TagPos.Y + ESP.HealthOffset)
+			self.Components.Health.Position = Vector2.new(TagPos.X, TagPos.Y + offset)
 			self.Components.Health.Text = health.."/"..hum.MaxHealth
 			self.Components.Health.Color = ESP.Color
 		else
