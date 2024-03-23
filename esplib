@@ -9,6 +9,7 @@ local ESP = {
 	Names = true,
 	Distance = true,
 	Health = true,
+	ShowMaxHealth = false,
 	HealthBar = true,
 	LookAngle = true,
 	Tracers = true,
@@ -303,8 +304,11 @@ function boxBase:Update()
 			
 			self.Components.Health.Visible = true
 			self.Components.Health.Position = position1 + Vector2.new(6, 0)
-			self.Components.Health.Text = health.."/"..hum.MaxHealth
-			self.Components.Health.Color = ESP.Color
+			if ESP.ShowMaxHealth then
+				self.Components.Health.Text = health.."/"..hum.MaxHealth
+			else
+				self.Components.Health.Text = health
+			end
 		else
 			self.Components.Health.Visible = false
 		end
