@@ -264,12 +264,12 @@ function boxBase:Update()
 
 	if ESP.Names then
 		local TagPos, Vis5 = WorldToViewportPoint(cam, locs.TagPos.p)
-		self.Components.Name.Color = ESP.Color
 
 		if Vis5 then
 			self.Components.Name.Visible = true
 			self.Components.Name.Position = Vector2.new(TagPos.X, TagPos.Y + -14)
 			self.Components.Name.Text = self.Name
+			self.Components.Name.Color = ESP.Color
 		else
 			self.Components.Name.Visible = false
 		end
@@ -282,12 +282,12 @@ function boxBase:Update()
 		
 		local actualDis = math.floor((cam.CFrame.Position - cf.Position).Magnitude) / 3
 		local actualdis2 = math.modf(actualDis)
-		self.Components.Distance.Color = ESP.Color
 		
 		if VisA then
 			self.Components.Distance.Visible = true
 			self.Components.Distance.Position = Vector2.new(TagPos.X, TagPos.Y + -28)
 			self.Components.Distance.Text = actualdis2.."m away"
+			self.Components.Distance.Color = ESP.Color
 		else
 			self.Components.Distance.Visible = false
 		end
@@ -297,7 +297,6 @@ function boxBase:Update()
 
 	if ESP.Health then
 		local TagPos, VisB = WorldToViewportPoint(cam, locs.TagPos.p)
-		self.Components.Health.Color = ESP.Color
 
 		if VisB then
 			local health = math.ceil(hum.Health)
@@ -305,6 +304,7 @@ function boxBase:Update()
 			self.Components.Health.Visible = true
 			self.Components.Health.Position = Vector2.new(TagPos.X, TagPos.Y + -42)
 			self.Components.Health.Text = health.."/"..hum.MaxHealth
+			self.Components.Health.Color = ESP.Color
 		else
 			self.Components.Health.Visible = false
 		end
@@ -314,12 +314,12 @@ function boxBase:Update()
 
 	if ESP.Tracers then
 		local TorsoPos, OnScreen = WorldToViewportPoint(cam, humRp.Position)
-		self.Components.Tracer.Color = ESP.Color
 
 		if OnScreen then
 			self.Components.Tracer.Visible = true
 			self.Components.Tracer.From = Vector2.new(TorsoPos.X, TorsoPos.Y)
 			self.Components.Tracer.To = Vector2.new(cam.ViewportSize.X/2,cam.ViewportSize.Y/ESP.AttachShift)
+			self.Components.Tracer.Color = ESP.Color
 		else
 			self.Components.Tracer.Visible = false
 		end
