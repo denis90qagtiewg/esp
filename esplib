@@ -443,6 +443,7 @@ function ESP:Add(obj, options)
 		Center = true,
 		Outline = true,
 		Size = 19,
+		Font = Enum.Font.Code,
 		Visible = self.Enabled and self.Names
 	})
 	box.Components["Distance"] = Draw("Text", {
@@ -450,6 +451,7 @@ function ESP:Add(obj, options)
 		Center = true,
 		Outline = true,
 		Size = 19,
+		Font = Enum.Font.Code,
 		Visible = self.Enabled and self.Distance
 	})
 
@@ -458,6 +460,7 @@ function ESP:Add(obj, options)
 		Center = true,
 		Outline = true,
 		Size = 19,
+		Font = Enum.Font.Code,
 		Visible = self.Enabled and self.Health
 	})
 	box.Components["Tracer"] = Draw("Line", {
