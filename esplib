@@ -11,7 +11,6 @@ local ESP = {
 	Health = true,
 	HealthBar = true,
 	LookAngle = true,
-	Chams = true,
 	Tracers = true,
 	ProximityArrows = true,
 	TeamColor = true,
@@ -21,8 +20,6 @@ local ESP = {
 	Players = true,
 	
 	ProximityMaxDistance = 250,
-	
-	ChamsColor = Color3.fromRGB(255, 255, 255),
 
 	Objects = setmetatable({}, {__mode="kv"}),
 	Overrides = {}
@@ -410,22 +407,6 @@ function boxBase:Update()
 	else
 		Arrow.Visible = false
 	end
-	
-	local chams = self.Components.Chams
-	if ESP.Chams then
-		local idk, OnScreen = WorldToViewportPoint(cam, humRp.Position)
-		
-		if OnScreen then
-			chams.Enabled = true
-			
-			chams.FillColor = ESP.ChamsColor
-			chams.OutlineColor = ESP.ChamsColor
-		else
-			chams.Enabled = false
-		end
-	else
-		chams.Enabled = false
-	end
 end
 
 function ESP:Add(obj, options)
@@ -517,13 +498,6 @@ function ESP:Add(obj, options)
 		Filled = true,
 		Visible = self.Enabled and self.LookAngle
 	})
-	
-	local chams = Instance.new("Highlight")
-	chams.Enabled = ESP.Chams
-	chams.FillColor = ESP.ChamsColor
-	chams.OutlineColor = ESP.ChamsColor
-	
-	box.Components["Chams"] = chams
 
 	self.Objects[obj] = box
 
