@@ -270,7 +270,6 @@ function boxBase:Update()
 			self.Components.Name.Visible = true
 			self.Components.Name.Position = Vector2.new(TagPos.X, TagPos.Y + -14)
 			self.Components.Name.Text = self.Name
-			self.Components.Name.Color = color
 		else
 			self.Components.Name.Visible = false
 		end
@@ -289,7 +288,6 @@ function boxBase:Update()
 			self.Components.Distance.Visible = true
 			self.Components.Distance.Position = Vector2.new(TagPos.X, TagPos.Y + -28)
 			self.Components.Distance.Text = actualdis2.."m away"
-			self.Components.Distance.Color = color
 		else
 			self.Components.Distance.Visible = false
 		end
@@ -307,7 +305,6 @@ function boxBase:Update()
 			self.Components.Health.Visible = true
 			self.Components.Health.Position = Vector2.new(TagPos.X, TagPos.Y + -42)
 			self.Components.Health.Text = health.."/"..hum.MaxHealth
-			self.Components.Health.Color = color
 		else
 			self.Components.Health.Visible = false
 		end
@@ -317,12 +314,12 @@ function boxBase:Update()
 
 	if ESP.Tracers then
 		local TorsoPos, OnScreen = WorldToViewportPoint(cam, humRp.Position)
+		self.Components.Tracer.Color = ESP.Color
 
 		if OnScreen then
 			self.Components.Tracer.Visible = true
 			self.Components.Tracer.From = Vector2.new(TorsoPos.X, TorsoPos.Y)
 			self.Components.Tracer.To = Vector2.new(cam.ViewportSize.X/2,cam.ViewportSize.Y/ESP.AttachShift)
-			self.Components.Tracer.Color = color
 		else
 			self.Components.Tracer.Visible = false
 		end
