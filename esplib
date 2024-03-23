@@ -342,6 +342,8 @@ function boxBase:Update()
 		local TorsoPos, OnScreen = WorldToViewportPoint(cam, humRp.Position)
 
 		if OnScreen then
+			local quad = self.Components.Quad
+			print(quad.Position)
 			local size1 = Vector2.new(1000 / RootPosition.Z, HeadPosition.Y - LegPosition.Y)
 			local position1 = Vector2.new(RootPosition.X - size1.X / 2, RootPosition.Y - size1.Y / 2)
 			
@@ -371,7 +373,7 @@ function boxBase:Update()
 		if OnScreen then	
 			LookAngleLine.From = Vector2.new(headpos.X, headpos.Y)
 			LookAngleLine.To = Vector2.new(vpHit.X, vpHit.Y)
-			LookAngleLine.Visible = false
+			LookAngleLine.Visible = true
 		else
 			LookAngleLine.Visible = false
 		end
