@@ -394,13 +394,13 @@ function boxBase:Update()
 			local vectorUnit
 
 			if (labelPos.Z < 0) then
-				vectorUnit = -(Vector2.new(labelPos.X, labelPos.Y) - viewportSizeCenter).Unit
+				vectorUnit = -(Vector2.new(labelPos.X, labelPos.Y) - viewportSize).Unit
 			else
-				vectorUnit = (Vector2.new(labelPos.X, labelPos.Y) - viewportSizeCenter).Unit
+				vectorUnit = (Vector2.new(labelPos.X, labelPos.Y) - viewportSize).Unit
 			end
 			
 			local degreeOfCorner = -math.atan2(vectorUnit.X, vectorUnit.Y) - math.rad(45)
-			local closestPointToPlayer = viewportSizeCenter + vectorUnit * 20
+			local closestPointToPlayer = viewportSize + vectorUnit * 20
 			
 			local pointA, pointB, pointC = boxBase:GetOffsetTrianglePosition(closestPointToPlayer, degreeOfCorner)
 			
@@ -425,7 +425,7 @@ function ESP:Add(obj, options)
 	local box = setmetatable({
 		Name = options.Name or obj.Name,
 		Type = "Box",
-		Color = options.Color --[[or self:GetColor(obj)]],
+		Color = ESP.Color --[[or self:GetColor(obj)]],
 		Size = options.Size or self.BoxSize,
 		Object = obj,
 		Player = options.Player or plrs:GetPlayerFromCharacter(obj),
@@ -443,28 +443,28 @@ function ESP:Add(obj, options)
 	
 	box.Components["BoxesOutline"] = Draw("Square", {
 		Thickness = 3,
-		Color = ESP.Color,
+		Color = box.Color,
 		Transparency = 1,
 		Filled = false,
 		Visible = self.Enabled and self.Boxes
 	})
 	box.Components["Box"] = Draw("Square", {
 		Thickness = 1,
-		Color = ESP.Color,
+		Color = box.Color,
 		Transparency = 1,
 		Filled = false,
 		Visible = self.Enabled and self.Boxes
 	})
 	box.Components["Name"] = Draw("Text", {
 		Text = box.Name,
-		Color = ESP.Color,
+		Color = box.Color,
 		Center = true,
 		Outline = true,
 		Size = 19,
 		Visible = self.Enabled and self.Names
 	})
 	box.Components["Distance"] = Draw("Text", {
-		Color = ESP.Color,
+		Color = box.Color,
 		Center = true,
 		Outline = true,
 		Size = 19,
@@ -472,7 +472,7 @@ function ESP:Add(obj, options)
 	})
 
 	box.Components["Health"] = Draw("Text", {
-		Color = ESP.Color,
+		Color = box.Color,
 		Center = true,
 		Outline = true,
 		Size = 19,
@@ -480,13 +480,13 @@ function ESP:Add(obj, options)
 	})
 	box.Components["Tracer"] = Draw("Line", {
 		Thickness = ESP.Thickness,
-		Color = ESP.Color,
+		Color = box.Color,
 		Transparency = 1,
 		Visible = self.Enabled and self.Tracers
 	})
 	box.Components["LookAngle"] = Draw("Line", {
 		Thickness = ESP.Thickness,
-		Color = ESP.Color,
+		Color = box.Color,
 		Transparency = 1,
 		Visible = self.Enabled and self.LookAngle
 	})
@@ -504,7 +504,7 @@ function ESP:Add(obj, options)
 	})
 	box.Components["ProximityArrow"] = Draw("Triangle", {
 		Thickness = 0,
-		Color = ESP.Color,
+		Color = box.Color,
 		Filled = true,
 		Visible = self.Enabled and self.LookAngle
 	})
