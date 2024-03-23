@@ -20,6 +20,9 @@ local ESP = {
 	Players = true,
 	
 	ProximityMaxDistance = 250,
+	NameOffset = -14,
+	HealthOffset = -42,
+	DistanceOffset = -28,
 
 	Objects = setmetatable({}, {__mode="kv"}),
 	Overrides = {}
@@ -267,7 +270,7 @@ function boxBase:Update()
 
 		if Vis5 then
 			self.Components.Name.Visible = true
-			self.Components.Name.Position = Vector2.new(TagPos.X, TagPos.Y + -14)
+			self.Components.Name.Position = Vector2.new(TagPos.X, TagPos.Y + ESP.NameOffset)
 			self.Components.Name.Text = self.Name
 			self.Components.Name.Color = ESP.Color
 		else
@@ -285,7 +288,7 @@ function boxBase:Update()
 		
 		if VisA then
 			self.Components.Distance.Visible = true
-			self.Components.Distance.Position = Vector2.new(TagPos.X, TagPos.Y + -28)
+			self.Components.Distance.Position = Vector2.new(TagPos.X, TagPos.Y + ESP.DistanceOffset)
 			self.Components.Distance.Text = actualdis2.."m away"
 			self.Components.Distance.Color = ESP.Color
 		else
@@ -302,7 +305,7 @@ function boxBase:Update()
 			local health = math.ceil(hum.Health)
 			
 			self.Components.Health.Visible = true
-			self.Components.Health.Position = Vector2.new(TagPos.X, TagPos.Y + -42)
+			self.Components.Health.Position = Vector2.new(TagPos.X, TagPos.Y + ESP.HealthOffset)
 			self.Components.Health.Text = health.."/"..hum.MaxHealth
 			self.Components.Health.Color = ESP.Color
 		else
@@ -443,7 +446,7 @@ function ESP:Add(obj, options)
 		Center = true,
 		Outline = true,
 		Size = 19,
-		Font = Enum.Font.Code,
+		Font = 2,
 		Visible = self.Enabled and self.Names
 	})
 	box.Components["Distance"] = Draw("Text", {
@@ -451,7 +454,7 @@ function ESP:Add(obj, options)
 		Center = true,
 		Outline = true,
 		Size = 19,
-		Font = Enum.Font.Code,
+		Font = 2,
 		Visible = self.Enabled and self.Distance
 	})
 
@@ -460,7 +463,7 @@ function ESP:Add(obj, options)
 		Center = true,
 		Outline = true,
 		Size = 19,
-		Font = Enum.Font.Code,
+		Font = 2,
 		Visible = self.Enabled and self.Health
 	})
 	box.Components["Tracer"] = Draw("Line", {
