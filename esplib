@@ -4,7 +4,7 @@ local ESP = {
 	Boxes = true,
 	BoxShift = CFrame.new(0,-1.5,0),
 	BoxSize = Vector3.new(4,6,0),
-	Color = Color3.fromRGB(255, 255, 255),
+	Color = Color3.new(1, 1, 1),
 	FaceCamera = false,
 	Names = true,
 	Distance = true,
@@ -258,6 +258,8 @@ function boxBase:Update()
 		local a, OnScreen = WorldToViewportPoint(cam, humRp.Position)
 
 		if boxes then
+			boxesOutline.Color = ESP.Color
+			boxes.Color = ESP.Color
 			if OnScreen then
 				boxesOutline.Size = size1
 				boxesOutline.Position = position1
@@ -371,6 +373,8 @@ function boxBase:Update()
 		local vpHit, OnScreen = cam:WorldToViewportPoint(hitpos)
 		local headpos = cam:WorldToViewportPoint(head.Position)
 		
+		LookAngleLine.Color = ESP.Color
+		
 		if OnScreen then	
 			LookAngleLine.From = Vector2.new(headpos.X, headpos.Y)
 			LookAngleLine.To = Vector2.new(vpHit.X, vpHit.Y)
@@ -386,6 +390,7 @@ function boxBase:Update()
 	if ESP.ProximityArrows then
 		local labelPos, OnScreen = WorldToViewportPoint(cam, humRp.Position)
 		local distance = (humRp.Position - cam.CFrame.Position).Magnitude
+		Arrow.Color = ESP.Color
 		
 		if not OnScreen and distance < ESP.ProximityMaxDistance then
 			local viewportSize = Vector2.new(cam.ViewportSize.X / 2, cam.ViewportSize.Y - 10)
