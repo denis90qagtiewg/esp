@@ -228,6 +228,7 @@ function boxBase:Update()
 	local headOff = Vector3.new(0, 0.5, 0)
 	local legOff = Vector3.new(0, 3, 0)
 	
+	local RootPosition = WorldToViewportPoint(cam, humRp.Position)
 	local HeadPosition = WorldToViewportPoint(cam, head.Position + headOff)
 	local LegPosition = WorldToViewportPoint(cam, humRp.Position - legOff)
 
@@ -341,12 +342,15 @@ function boxBase:Update()
 		local TorsoPos, OnScreen = WorldToViewportPoint(cam, humRp.Position)
 
 		if OnScreen then
+			local size1 = Vector2.new(1000 / RootPosition.Z, HeadPosition.Y - LegPosition.Y)
+			local position1 = Vector2.new(RootPosition.X - size1.X / 2, RootPosition.Y - size1.Y / 2)
+			
 			HealthBarOutline.Size = Vector2.new(2, (HeadPosition.Y - LegPosition.Y))
-			HealthBarOutline.Position = humRp.Position.X - Vector2.new(6, 0)
+			HealthBarOutline.Position = position1 - Vector2.new(6, 0)
 			HealthBarOutline.Visible = true
 			
 			HealthBarAc.Size = Vector2.new(2, (HeadPosition.Y - LegPosition.Y) / (hum.MaxHealth / math.clamp(hum.Health, 0, hum.MaxHealth)))
-			HealthBarAc.Position = Vector2.new(HealthBarOutline.Position.X, HealthBarOutline.Position.Y + (1/HealthBarAc.Size.Y))
+			HealthBarAc.Position = Vector2.new(position1.X - 6, position1.Y + (1/HealthBarAc.Size.Y))
 			HealthBarAc.Visible = true
 		else
 			HealthBarOutline.Visible = false
